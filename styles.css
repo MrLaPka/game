@@ -8,7 +8,10 @@ html, body {
 
 }
 
-
+h1{
+    text-align: center;
+    color: white;
+}
 
 canvas {
     display: block;
