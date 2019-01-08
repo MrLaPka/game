@@ -1,9 +1,7 @@
 import res from './res.js';
 import spr from './sprite.js';
-import inp from './in.js';
 res();
 spr();
-inp();
 
 let requestAnimFrame = (function(){
     return window.requestAnimationFrame       ||
@@ -24,15 +22,7 @@ canvas.height = 700;
 document.body.appendChild(canvas);
 
 // The main game loop
-let lastTime;
-function main() {
-        let now = Date.now();
-    let dt = (now - lastTime) / 1000.0;    
-    update(dt);
-    render();
-        lastTime = now;
-        requestAnimFrame(main);
-};
+
 let windowName;
 let nameArea;
 let enteredNameYet = false;
@@ -55,11 +45,27 @@ scoreButton.style.backgroundColor = "yellow";
 scoreButton.style.width = 200+'px';
 scoreButton.style.height = 90+'px';
 startMenu.appendChild(scoreButton);
+let screenButton = document.createElement('button');
+screenButton.innerText = "A screenshot of gameplay";
+screenButton.style.backgroundColor = "yellow";
+screenButton.style.width = 200+'px';
+screenButton.style.height = 90+'px';
+startMenu.appendChild(screenButton);
 document.body.appendChild(startMenu);
 function init() {
     startMenu.style.display = 'block';
-    document.getElementById('instructions').style.display = 'none';
-    scoreEl.style.display = 'none';
+screenButton.addEventListener('click',function(){
+screenButton.style.display ='none';
+playButton.style.display ='none';
+scoreButton.style.display ='none';
+startMenu.style.position = 'absolute';
+let imageGameplay = document.createElement('img');
+imageGameplay.src = 'img/Gameplay.jpg';
+imageGameplay.style.position = 'absolute';
+imageGameplay.style.zIndex = '1000';
+imageGameplay.style.align = 'center';
+document.body.appendChild(imageGameplay);
+});
 playButton.addEventListener('click',function(){
     startMenu.style.display = 'none';
     canvas.style.display = 'block';
@@ -68,268 +74,107 @@ playButton.addEventListener('click',function(){
 }
 
 resources.load([
-    'img/sprites.png',
     'img/terrain.png'
 ]);
 resources.onReady(init);  
 // Game state
-let player = {
-    pos: [0, 0],
-    sprite: new Sprite('img/sprites.png', [0, 0], [39, 39], 16, [0, 1])
-};
 
-let bullets = [];
-let enemies = [];
-let explosions = [];
-
-let lastFire = Date.now();
-let gameTime = 0;
-let isGameOver;
-let terrainPattern;
-
-let score = 0;
-let scoreEl = document.getElementById('score');
-
-// Speed in pixels per second
-let playerSpeed = 200;
-let bulletSpeed = 500;
-let enemySpeed = 100;
-
-// Update game objects
-function update(dt) {
-    gameTime += dt;
-
-    handleInput(dt);
-    updateEntities(dt);
-
-    // It gets harder over time by adding enemies using this
-    // equation: 1-.993^gameTime
-    if(Math.random() < 1 - Math.pow(.993, gameTime)) {
-        enemies.push({
-            pos: [canvas.width,
-                  Math.random() * (canvas.height - 39)],
-            sprite: new Sprite('img/sprites.png', [0, 78], [80, 39],
-                               6, [0, 1, 2, 3, 2, 1])
-        });
-    }
-
-    checkCollisions();
-
-    scoreEl.innerHTML = score;
-};
-
-function handleInput(dt) {
-    if(input.isDown('DOWN') || input.isDown('s')) {
-        player.pos[1] += playerSpeed * dt;
-    }
-
-    if(input.isDown('UP') || input.isDown('w')) {
-        player.pos[1] -= playerSpeed * dt;
-    }
-
-    if(input.isDown('LEFT') || input.isDown('a')) {
-        player.pos[0] -= playerSpeed * dt;
-    }
-
-    if(input.isDown('RIGHT') || input.isDown('d')) {
-        player.pos[0] += playerSpeed * dt;
-    }
-
-    if(input.isDown('SPACE') &&
-       !isGameOver &&
-       Date.now() - lastFire > 100) {
-        let x = player.pos[0] + player.sprite.size[0] / 2;
-        let y = player.pos[1] + player.sprite.size[1] / 2;
-
-        bullets.push({ pos: [x, y],
-                       dir: 'forward',
-                       sprite: new Sprite('img/sprites.png', [0, 39], [18, 8]) });
-        bullets.push({ pos: [x, y],
-                       dir: 'up',
-                       sprite: new Sprite('img/sprites.png', [0, 50], [9, 5]) });
-        bullets.push({ pos: [x, y],
-                       dir: 'down',
-                       sprite: new Sprite('img/sprites.png', [0, 60], [9, 5]) });
-
-        lastFire = Date.now();
-    }
-}
-
-function updateEntities(dt) {
-    // Update the player sprite animation
-    player.sprite.update(dt);
-
-    // Update all the bullets
-    for(let i=0; i<bullets.length; i++) {
-        let bullet = bullets[i];
-
-        switch(bullet.dir) {
-        case 'up': bullet.pos[1] -= bulletSpeed * dt; break;
-        case 'down': bullet.pos[1] += bulletSpeed * dt; break;
-        default:
-            bullet.pos[0] += bulletSpeed * dt;
-        }
-
-        // Remove the bullet if it goes offscreen
-        if(bullet.pos[1] < 0 || bullet.pos[1] > canvas.height ||
-           bullet.pos[0] > canvas.width) {
-            bullets.splice(i, 1);
-            i--;
-        }
-    }
-
-    // Update all the enemies
-    for(let i=0; i<enemies.length; i++) {
-        enemies[i].pos[0] -= enemySpeed * dt;
-        enemies[i].sprite.update(dt);
-
-        // Remove if offscreen
-        if(enemies[i].pos[0] + enemies[i].sprite.size[0] < 0) {
-            enemies.splice(i, 1);
-            i--;
-        }
-    }
-
-    // Update all the explosions
-    for(let i=0; i<explosions.length; i++) {
-        explosions[i].sprite.update(dt);
-
-        // Remove if animation is done
-        if(explosions[i].sprite.done) {
-            explosions.splice(i, 1);
-            i--;
-        }
-    }
-}
-
-// Collisions
-
-function collides(x, y, r, b, x2, y2, r2, b2) {
-    return !(r <= x2 || x > r2 ||
-             b <= y2 || y > b2);
-}
-
-function boxCollides(pos, size, pos2, size2) {
-    return collides(pos[0], pos[1],
-                    pos[0] + size[0], pos[1] + size[1],
-                    pos2[0], pos2[1],
-                    pos2[0] + size2[0], pos2[1] + size2[1]);
-}
-let globalscore = 0;
-function checkCollisions() {
-    checkPlayerBounds();
-    
-    // Run collision detection for all enemies and bullets
-    for(let i=0; i<enemies.length; i++) {
-        let pos = enemies[i].pos;
-        let size = enemies[i].sprite.size;
-
-        for(let j=0; j<bullets.length; j++) {
-            let pos2 = bullets[j].pos;
-            let size2 = bullets[j].sprite.size;
-
-            if(boxCollides(pos, size, pos2, size2)) {
-                // Remove the enemy
-                enemies.splice(i, 1);
-                i--;
-
-                // Add score
-                score += 100;
-                globalscore = score;
-
-                // Add an explosion
-                explosions.push({
-                    pos: pos,
-                    sprite: new Sprite('img/sprites.png',
-                                       [0, 117],
-                                       [39, 39],
-                                       16,
-                                       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                                       null,
-                                       true)
-                });
-
-                // Remove the bullet and stop this iteration
-                bullets.splice(j, 1);
-                break;
-            }
-        }
-
-        if(boxCollides(pos, size, player.pos, player.sprite.size)) {
-            gameOver();
-        }
-    }
-}
-
-function checkPlayerBounds() {
-    // Check bounds
-    if(player.pos[0] < 0) {
-        player.pos[0] = 0;
-    }
-    else if(player.pos[0] > canvas.width - player.sprite.size[0]) {
-        player.pos[0] = canvas.width - player.sprite.size[0];
-    }
-
-    if(player.pos[1] < 0) {
-        player.pos[1] = 0;
-    }
-    else if(player.pos[1] > canvas.height - player.sprite.size[1]) {
-        player.pos[1] = canvas.height - player.sprite.size[1];
-    }
-}
-
-// Draw everything
-function render() {
-    ctx.fillStyle = terrainPattern;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Render the player if the game isn't over
-    if(!isGameOver) {
-        renderEntity(player);
-    }
-
-    renderEntities(bullets);
-    renderEntities(enemies);
-    renderEntities(explosions);
-};
-
-function renderEntities(list) {
-    for(let i=0; i<list.length; i++) {
-        renderEntity(list[i]);
-    }    
-}
-
-function renderEntity(entity) {
-    ctx.save();
-    ctx.translate(entity.pos[0], entity.pos[1]);
-    entity.sprite.render(ctx);
-    ctx.restore();
-}
-
-// Game over
-function gameOver() {
-    document.getElementById('game-over').style.display = 'block';
-    document.getElementById('score-in-game-over').innerHTML = `Score: ${globalscore}`;
-    document.getElementById('game-over-overlay').style.display = 'block';
-    isGameOver = true;
-}
 
 function toRun(){
-    document.getElementById('instructions').style.display = 'block';
-    scoreEl.style.display = 'block';
-    terrainPattern = ctx.createPattern(resources.get('img/terrain.png'), 'repeat');            
-    document.getElementById('play-again').addEventListener('click', function() {
-        reset();
-    });
+    //document.getElementById('instructions').style.display = 'block';
+    let playInGame = document.createElement('div');
+    playInGame.style.marginTop = '100px';
+    playInGame.style.marginLeft= '300px';
+    playInGame.style.width = '1300px';
+    playInGame.style.height = '700px';
+    playInGame.style.background = "url(img/terrain.png)";
+    playInGame.style.backgroundSize = "100%";
+    playInGame.style.position = "absolute";
+    let gg = document.createElement('div');
+    let monster = document.createElement('div');
+    let spellBook = document.createElement('button');
+    ggRender(gg);
+    spellBookButtonRender(spellBook);
+    monsterRender(monster);
+    document.body.appendChild(playInGame);
+    document.body.appendChild(gg);
+    document.body.appendChild(spellBook);
+    document.body.appendChild(monster);
+    spellBook.addEventListener('click', function(){
+        spellBookRender();
 
-    document.getElementById('menu').addEventListener('click', function() {
-        canvas.style.display = 'none';
-      reset();
-     init();
-    });
-    reset();
-    lastTime = Date.now();
-    main();
+    })
+}
+
+
+function monsterRender(monster){
+let monsterHeaders = ["img/monster1.png,img/monster2.png,img/monster3.png"];
+monster.style.position = "absolute";
+monster.style.zIndex = "1000";
+monster.style.marginLeft = "750px";
+monster.style.marginTop = "400px";
+monster.style.width = '175px';
+monster.style.height = '160px';
+monster.style.backgroundSize = '100%';
+}
+
+function ggRender(gg){
+gg.style.position = "absolute";
+gg.style.zIndex = "1000";
+gg.style.marginLeft = "350px";
+gg.style.marginTop = "400px";
+gg.style.width = '175px';
+gg.style.height = '160px';
+gg.style.background = "url(img/gg.png)";
+gg.style.backgroundSize = '100%';
+}
+
+function spellBookButtonRender(spellBook){
+    spellBook.innerText = "Spellbook";
+    spellBook.style.marginLeft = "940px";
+    spellBook.style.marginTop = '130px';
+    spellBook.style.position = "absolute";
+    spellBook.style.zIndex = "1000";
+
+}
+
+function spellBookRender(){
+    let spellBookMain = document.createElement('div');
+    spellBookMain.style.marginTop = '20px';
+    spellBookMain.style.marginLeft= '450px';
+    spellBookMain.style.zIndex = "1000";
+    spellBookMain.style.width = '1050px';
+    spellBookMain.style.height = '800px';
+    spellBookMain.style.background = "url(img/spellbook.png)";
+    spellBookMain.style.backgroundSize = "100%";
+    spellBookMain.style.position = "absolute";
+    let pToChoose = document.createElement('p');
+    pToChoose.innerText = 'Please select a spell';
+    pToChoose.style.align = 'center';
+    pToChoose.style.display = 'block';
+    pToChoose.style.paddingTop = '180px';
+    pToChoose.style.paddingLeft= '225px';
+    pToChoose.style.fontSize = '40px';
+    pToChoose.style.fontFamily = 'COMMERCIALSCRIPT BT';
+    pToChoose.style.color = '#0000ff';
+    spellBookMain.appendChild(pToChoose);
+    let ariphmeticButton = document.createElement('button');
+    ariphmeticButton.innerText = "Solve the example";
+    ariphmeticButton.style.display = 'inline-block';
+    ariphmeticButton.style.backgroundColor = "yellow";
+    ariphmeticButton.style.width = 200+'px';
+    ariphmeticButton.style.height = 90+'px';
+    ariphmeticButton.style.marginLeft= '250px';
+    spellBookMain.appendChild(ariphmeticButton);
+    let puzzleButton = document.createElement('button');
+    puzzleButton.innerText = "Guess the puzzle";
+    puzzleButton.style.display = 'inline-block';
+    puzzleButton.style.backgroundColor = "yellow";
+    puzzleButton.style.width = 200+'px';
+    puzzleButton.style.height = 90+'px';         
+    puzzleButton.style.marginLeft= '100px';
+    spellBookMain.appendChild(puzzleButton);
+    document.body.appendChild(spellBookMain);
 }
 
 function enterName() {
@@ -374,17 +219,5 @@ else{
 }
 }
 
-// Reset game to original state
-function reset() {
-    document.getElementById('game-over').style.display = 'none';
-    document.getElementById('game-over-overlay').style.display = 'none';
-    isGameOver = false;
-    gameTime = 0;
-    score = 0;
-globalscore = 0;
-    enemies = [];
-    bullets = [];
 
-    player.pos = [50, canvas.height / 2];
-};
 
