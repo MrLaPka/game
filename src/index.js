@@ -339,7 +339,7 @@ function faerbolRender(){
         });
         $(faerbol).queue(function() {
         hpMonster -= 67;
-        document.getElementById('gghp').style.width= hpMonster + 'px';
+        document.getElementById('monsterhp').style.width= hpMonster + 'px';
         $(this).dequeue();
         }); 
 }
