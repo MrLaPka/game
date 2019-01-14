@@ -2,6 +2,7 @@ import res from './res.js';
 import spr from './sprite.js';
 import getMonsterName from './randomName.js';
 import getOperation from './ariphmeticTask.js';
+import monsterRender from './monsterGeneration.js';
 res();
 spr();
 let requestAnimFrame = (function(){
@@ -23,7 +24,7 @@ canvas.height = 700;
 document.body.appendChild(canvas);
 
 // The main game loop
-
+let beginGame = true;
 let windowName;
 let nameArea;
 let enteredNameYet = false;
@@ -56,7 +57,17 @@ document.body.appendChild(startMenu);
 
 
 function init() {
-    startMenu.style.display = 'block';
+document.write(`<object width="0" height="0" align="center" id = "mainaudio">
+<param name="movie" value="audio/BGsound.mp3">
+<embed src="audio/BGsound.mp3"
+autostart="true"
+width="0"
+height="0"
+align="center"
+type="audio/mid"
+pluginspage="http://www.macromedia.com/go/getflashplayer">
+</object>`);
+startMenu.style.display = 'block';
 screenButton.addEventListener('click',function(){
 screenButton.style.display ='none';
 playButton.style.display ='none';
@@ -72,16 +83,22 @@ document.body.appendChild(imageGameplay);
 playButton.addEventListener('click',function(){
     startMenu.style.display = 'none';
     canvas.style.display = 'block';
+    document.getElementById('mainaudio').setAttribute('hidden', 'true');
     enterName();
 });
 }
-
+function startTheGame(){
+if(beginGame === true)
 init();
+}
+startTheGame();
 
-let hpGg;
-let hpMonster;
+let hpGg = 201;
+let hpMonster = hpGg;
 
 function toRun(){
+    let globalPlayWindow = document.createElement('div');
+    globalPlayWindow.id = 'globalPlayWindow';
     let playInGame = document.createElement('div');
     playInGame.style.marginTop = '100px';
     playInGame.style.marginLeft= '300px';
@@ -93,34 +110,22 @@ function toRun(){
     let gg = document.createElement('div');
     let monster = document.createElement('div');
     let spellBook = document.createElement('button');
-    hpGg = 201;
-    hpMonster = 201;
+    globalPlayWindow.appendChild(playInGame);
+    globalPlayWindow.appendChild(gg);
+    globalPlayWindow.appendChild(spellBook);
+    globalPlayWindow.appendChild(monster);
+    document.body.appendChild(globalPlayWindow);
     ggRender(gg);
     spellBookButtonRender(spellBook);
     monsterRender(monster);
     interfaceGgRender(hpGg);
     interfaceMonsterRender(hpMonster);
-    document.body.appendChild(playInGame);
-    document.body.appendChild(gg);
-    document.body.appendChild(spellBook);
-    document.body.appendChild(monster);
     spellBook.addEventListener('click', function(){
         spellBook.disabled = true;
         spellBookRender();
     })
 }
 
-
-function monsterRender(monster){
-let monsterHeaders = ["img/monster1.png,img/monster2.png,img/monster3.png"];
-monster.style.position = "absolute";
-monster.style.zIndex = "1000";
-monster.style.marginLeft = "750px";
-monster.style.marginTop = "400px";
-monster.style.width = '175px';
-monster.style.height = '160px';
-monster.style.backgroundSize = '100%';
-}
 
 function ggRender(gg){
 gg.style.position = "absolute";
@@ -144,7 +149,7 @@ hp.style.background = "repeating-linear-gradient(-45deg,#606dbc,#606dbc 10px,#46
 hp.style.zIndex = '1000';
 hp.style.display = "inline-block";
 hp.style.position = "absolute";
-document.body.appendChild(hp);
+document.getElementById('globalPlayWindow').appendChild(hp);
 let nameGg = document.createElement('div');
 nameGg.style.marginTop = '70px';
 nameGg.style.marginLeft = '350px'; 
@@ -153,13 +158,14 @@ nameGg.style.height = '30px';
 nameGg.style.zIndex = '1000';
 nameGg.style.display = "inline-block";
 nameGg.style.position = "absolute";
+nameGg.id = 'namegg';
 let pName = document.createElement('p');
 pName.innerText = nameArea.value;
 pName.style.color = 'white';
 pName.style.fontSize = '30px';
 pName.style.fontFamily = 'matura mt script capitals';
 nameGg.appendChild(pName);
-document.body.appendChild(nameGg);
+document.getElementById('globalPlayWindow').appendChild(nameGg);
 }
 
 function interfaceMonsterRender(hpMonster){  
@@ -173,7 +179,7 @@ function interfaceMonsterRender(hpMonster){
     hp.style.zIndex = '1000';
     hp.style.display = "inline-block";
     hp.style.position = "absolute";
-    document.body.appendChild(hp);
+    document.getElementById('globalPlayWindow').appendChild(hp);
     let nameMonster = document.createElement('div');
     nameMonster.style.marginTop = '70px';
     nameMonster.style.marginLeft = '1270px'; 
@@ -182,13 +188,14 @@ function interfaceMonsterRender(hpMonster){
     nameMonster.style.zIndex = '1000';
     nameMonster.style.display = "inline-block";
     nameMonster.style.position = "absolute";
+    nameMonster.id = 'namemonster';
     let pName = document.createElement('p');
     pName.innerText = getMonsterName();
     pName.style.color = 'white';
     pName.style.fontSize = '30px';
     pName.style.fontFamily = 'matura mt script capitals';
     nameMonster.appendChild(pName);
-document.body.appendChild(nameMonster);
+document.getElementById('globalPlayWindow').appendChild(nameMonster);
     }
     
 
@@ -197,8 +204,8 @@ function spellBookButtonRender(spellBook){
     spellBook.style.marginLeft = "940px";
     spellBook.style.marginTop = '130px';
     spellBook.style.position = "absolute";
-    spellBook.style.zIndex = "1000";
-    spellBook.id = 'spellbook';
+    spellBook.style.zIndex = "1010";
+    spellBook.id = 'spellbutton';
 
 }
 
@@ -212,6 +219,7 @@ function spellBookRender(){
     spellBookMain.style.background = "url(img/spellbook.png)";
     spellBookMain.style.backgroundSize = "100%";
     spellBookMain.style.position = "absolute";
+    spellBookMain.id ='spellbook';
     let pToChoose = document.createElement('p');
     pToChoose.innerText = 'Please select a spell';
     pToChoose.style.align = 'center';
@@ -245,7 +253,7 @@ function spellBookRender(){
 
     });
     spellBookMain.appendChild(puzzleButton);
-    document.body.appendChild(spellBookMain);
+    document.getElementById('globalPlayWindow').appendChild(spellBookMain);
 }
 
 let numberTask;
@@ -285,7 +293,7 @@ function taskGeneration(){
     taskWindow.appendChild(task);
     taskWindow.appendChild(solutionArea);
     taskWindow.appendChild(enterButton);
-    document.body.appendChild(taskWindow);
+    document.getElementById('globalPlayWindow').appendChild(taskWindow);
     enterButton.addEventListener('click',function(){
         if(solutionArea.value.match(/\D/g) || !solutionArea.value.match(/\d/) ){
         alert("Please enter correctly you solution to continue!");
@@ -293,7 +301,7 @@ function taskGeneration(){
         else{
         check(parseInt(solutionArea.value));
         taskWindow.style.display = 'none';
-        document.getElementById('spellbook').disabled = false;
+        document.getElementById('spellbook').remove();
         }
     })
 }
@@ -331,7 +339,7 @@ function faerbolRender(){
     faerbol.style.zIndex = '1000';
     faerbol.style.marginLeft = '410px';
     faerbol.style.marginTop = '458px';
-    document.body.appendChild(faerbol);
+    document.getElementById('globalPlayWindow').appendChild(faerbol);
     $(faerbol).animate({left: "+=800"}, 2000);
     $(faerbol).queue(function() {
         $(this).hide();
@@ -340,8 +348,18 @@ function faerbolRender(){
         $(faerbol).queue(function() {
         hpMonster -= 67;
         document.getElementById('monsterhp').style.width= hpMonster + 'px';
+        if(hpMonster == 0){
+        endWindow();
+        }
+        else{
+            document.getElementById('spellbutton').disabled = false;
+        }
         $(this).dequeue();
-        }); 
+        });
+        $(faerbol).queue(function() {
+            faerbol.remove();
+            $(this).dequeue();
+            });
 }
 
 function monsterFaerbolRender(){
@@ -353,7 +371,7 @@ function monsterFaerbolRender(){
     faerbol.style.zIndex = '1000';
     faerbol.style.marginLeft = '1250px';
     faerbol.style.marginTop = '458px';
-    document.body.appendChild(faerbol);
+    document.getElementById('globalPlayWindow').appendChild(faerbol);
     $(faerbol).animate({left: "-=815"}, 2000);
     $(faerbol).queue(function() {
         $(this).hide();
@@ -362,8 +380,19 @@ function monsterFaerbolRender(){
     $(faerbol).queue(function() {
         hpGg -= 67;
         document.getElementById('gghp').style.width= hpGg + 'px';
+        if(hpGg == 0){
+            endWindow();
+            }
+        else{
+            document.getElementById('spellbutton').disabled = false;
+        }
         $(this).dequeue();
         });
+        
+    $(faerbol).queue(function() {
+            faerbol.remove();
+            $(this).dequeue();
+            });
 }
 
 function enterName() {
@@ -410,4 +439,54 @@ function enterName() {
 else{
     toRun();
 }
+}
+function endWindow(){
+    let windowEnd = document.createElement('div');
+    windowEnd.style.zIndex = '1';
+    windowEnd.style.bottom = '0';
+    windowEnd.style.right = '0';
+    windowEnd.style.left = '0';
+    windowEnd.style.top = '0';
+    windowEnd.style.position = 'absolute';
+    windowEnd.style.height = '200px';
+    windowEnd.style.width = '512px';
+    windowEnd.style.margin = 'auto';
+    windowEnd.style.backgroundColor = 'black';
+    windowEnd.style.opacity = '.5';
+    windowEnd.style.color = 'white';
+    windowEnd.style.textAlign = 'center';
+    windowEnd.style.display = 'block';
+    let enterH2 = document.createElement('h2');
+    enterH2.style.fontSize = '3em';
+    enterH2.style.fontFamily = 'sans-serif';
+    if(hpMonster === 0){
+    enterH2.innerText = "VICTORY";
+    }
+    else{
+    enterH2.innerText = "GAME OVER!";  
+    }
+    let playAgainButton = document.createElement('button');
+    playAgainButton.innerText = "Play again";
+    playAgainButton.style.fontSize = '1.5em';
+    windowEnd.appendChild(enterH2);
+    windowEnd.appendChild(playAgainButton);
+    let mainMenuButton = document.createElement('button');
+    mainMenuButton.innerText = "Menu";
+    mainMenuButton.style.fontSize = '1.5em';
+    windowEnd.appendChild(mainMenuButton);
+    document.body.appendChild(windowEnd);
+    hpGg = 201;
+    hpMonster = hpGg;
+    beginGame = false;
+    playAgainButton.addEventListener('click',function(){
+        windowEnd.remove();
+        document.getElementById('globalPlayWindow').remove();
+        toRun();
+        });
+    mainMenuButton.addEventListener('click',function(){
+        windowEnd.remove();
+        document.getElementById('globalPlayWindow').remove();
+        startMenu.style.display = 'block';
+        document.getElementById('mainaudio').setAttribute('hidden', 'false');
+        });   
 }
