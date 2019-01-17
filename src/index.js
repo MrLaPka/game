@@ -1,5 +1,3 @@
-import res from './res.js';
-import spr from './sprite.js';
 import getMonsterName from './randomName.js';
 import getOperation from './ariphmeticTask.js';
 import monsterRender from './monsterGeneration.js';
@@ -55,28 +53,11 @@ function getKeyByValue( obj, value ) {
     }
 }
 
-res();
-spr();
-let requestAnimFrame = (function(){
-    return window.requestAnimationFrame       ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame    ||
-        window.oRequestAnimationFrame      ||
-        window.msRequestAnimationFrame     ||
-        function(callback){
-            window.setTimeout(callback, 1000 / 60);
-        };
-})();
 
-// Create the canvas
-let canvas = document.createElement("canvas");
-let ctx = canvas.getContext("2d");
-canvas.width = 1300;
-canvas.height = 700;
-document.body.appendChild(canvas);
 
 // The main game loop
 let beginGame = true;
+let score = 0;
 let windowName;
 let nameArea;
 let enteredNameYet = false;
@@ -134,7 +115,6 @@ document.body.appendChild(imageGameplay);
 });
 playButton.addEventListener('click',function(){
     startMenu.style.display = 'none';
-    canvas.style.display = 'block';
     document.getElementById('mainaudio').setAttribute('hidden', 'true');
     enterName();
 });
@@ -310,6 +290,7 @@ function spellBookRender(){
 }
 
 let numberTask;
+let capacity = 1;
 
 function taskGeneration(){
     let taskWindow = document.createElement('div');
@@ -332,7 +313,6 @@ function taskGeneration(){
     enterH2.style.fontSize = '3em';
     enterH2.style.fontFamily = 'sans-serif';
     enterH2.innerText = "Write the solution in an empty field";
-    let capacity = 2;
     let task = document.createElement('h3');
     task.style.fontFamily = 'sans-serif';
     numberTask = getOperation(capacity);
@@ -546,6 +526,7 @@ else{
 }
 }
 function endWindow(){
+    score += Math.floor((201 - hpMonster)/2);
     let windowEnd = document.createElement('div');
     windowEnd.style.zIndex = '1';
     windowEnd.style.bottom = '0';
@@ -565,33 +546,70 @@ function endWindow(){
     enterH2.style.fontSize = '3em';
     enterH2.style.fontFamily = 'sans-serif';
     if(hpMonster === 0){
+    if(capacity<3){
+        capacity+=1;
+        }
     enterH2.innerText = "VICTORY";
+    let NextRoundButton = document.createElement('button');
+    NextRoundButton.innerText = "NEXT ROUND";
+    NextRoundButton.style.fontSize = '1.5em';
+    windowEnd.appendChild(enterH2);
+    windowEnd.appendChild(NextRoundButton);
+    NextRoundButton.addEventListener('click',function(){
+        windowEnd.remove();
+        hpGg = 201;
+        hpMonster = hpGg;
+        document.getElementById('globalPlayWindow').remove();
+        toRun();
+    }); 
     }
     else{
-    enterH2.innerText = "GAME OVER!";  
-    }
+    enterH2.innerText = "GAME OVER!";
+    let ScorePlace = document.createElement('h3');
+    ScorePlace.innerText = "Score: " + score;
+    ScorePlace.style.fontFamily = 'sans-serif';   
     let playAgainButton = document.createElement('button');
-    playAgainButton.innerText = "Play again";
+    playAgainButton.innerText = "PLAY AGAIN";
     playAgainButton.style.fontSize = '1.5em';
     windowEnd.appendChild(enterH2);
+    windowEnd.appendChild(ScorePlace); 
     windowEnd.appendChild(playAgainButton);
+    playAgainButton.addEventListener('click',function(){
+        windowEnd.remove();
+        score -= Math.floor((201 - hpMonster)/2);
+        hpGg = 201;
+        hpMonster = hpGg;
+        document.getElementById('globalPlayWindow').remove();
+        toRun();
+        }); 
+    }
     let mainMenuButton = document.createElement('button');
-    mainMenuButton.innerText = "Menu";
+    mainMenuButton.innerText = "MENU";
     mainMenuButton.style.fontSize = '1.5em';
     windowEnd.appendChild(mainMenuButton);
     document.body.appendChild(windowEnd);
-    hpGg = 201;
-    hpMonster = hpGg;
     beginGame = false;
-    playAgainButton.addEventListener('click',function(){
-        windowEnd.remove();
-        document.getElementById('globalPlayWindow').remove();
-        toRun();
-        });
     mainMenuButton.addEventListener('click',function(){
+        if(hpGg === 0){
+        let cnf = confirm("If you exit the menu, the game will start again. Continue?");
+        if(cnf){
+        capacity = 1;
+        score = 0;
+        hpGg = 201;
+        hpMonster = hpGg;
         windowEnd.remove();
         document.getElementById('globalPlayWindow').remove();
         startMenu.style.display = 'block';
         document.getElementById('mainaudio').setAttribute('hidden', 'false');
+        }
+    }
+    else if (hpMonster === 0){
+        hpGg = 201;
+        hpMonster = hpGg;
+        windowEnd.remove();
+        document.getElementById('globalPlayWindow').remove();
+        startMenu.style.display = 'block';
+        document.getElementById('mainaudio').setAttribute('hidden', 'false');
+    }
         });   
 }
