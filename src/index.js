@@ -3,6 +3,58 @@ import spr from './sprite.js';
 import getMonsterName from './randomName.js';
 import getOperation from './ariphmeticTask.js';
 import monsterRender from './monsterGeneration.js';
+const riddles = {
+    "mouse":  `I live in the house.
+    I eat everything.
+    I am small and grey.
+    Cats eat me.`,
+
+    "pig":  `I oink.
+    I give you bacon.
+    I like mud and dirt.
+    I am pink.`,
+
+    "cat":  `I am a pet.
+    I like mice.
+    I have nine lives.
+    I purr and meow.`,
+
+    "dog":  `I’m a pet that has four legs
+    And a tail at the end
+    You might hear me barking
+    And I’m known as man’s best friend.`,
+
+    "rain":  `I am asked to come,
+    I am waited for;
+    But I make you hide
+    When I knock at the door.`,
+
+    "frost":  `Without hands it can paint,
+    Without teeth it can bite.`,
+
+    "watermelon":  `I am one color outside.
+    I am another color inside.
+    I grow in the summer.
+    I am sweet.
+    You cannot eat my outside.
+    My skin has stripes.`
+};
+
+const keys = Object.keys(riddles);
+
+function randomRiddles(){
+    return riddles[keys[Math.floor(Math.random() * keys.length)]];
+}
+
+function getKeyByValue( obj, value ) {
+    for( let prop in obj) {
+        if( obj.hasOwnProperty( prop ) ) {
+             if( obj[ prop ] === value )
+                 return prop;
+        }
+    }
+}
+
 res();
 spr();
 let requestAnimFrame = (function(){
@@ -250,7 +302,8 @@ function spellBookRender(){
     puzzleButton.style.height = 90+'px';         
     puzzleButton.style.marginLeft= '100px';
     puzzleButton.addEventListener('click',function(){
-
+    riddlesGeneration();
+    spellBookMain.style.display = 'none';
     });
     spellBookMain.appendChild(puzzleButton);
     document.getElementById('globalPlayWindow').appendChild(spellBookMain);
@@ -306,6 +359,48 @@ function taskGeneration(){
     })
 }
 
+function riddlesGeneration(){
+    let taskWindow = document.createElement('div');
+    taskWindow.style.display = 'none';
+    taskWindow.style.zIndex = '1';
+    taskWindow.style.bottom = '0';
+    taskWindow.style.right = '0';
+    taskWindow.style.left = '0';
+    taskWindow.style.top = '0';
+    taskWindow.style.position = 'absolute';
+    taskWindow.style.height = '400px';
+    taskWindow.style.width = '512px';
+    taskWindow.style.margin = 'auto';
+    taskWindow.style.backgroundColor = 'black';
+    taskWindow.style.opacity = '.5';
+    taskWindow.style.color = 'white';
+    taskWindow.style.textAlign = 'center';
+    taskWindow.style.display = 'block';
+    let enterH2 = document.createElement('h2');
+    enterH2.style.fontSize = '3em';
+    enterH2.style.fontFamily = 'sans-serif';
+    enterH2.innerText = "Write the solution in small letters in an empty field";
+    let task = document.createElement('h3');
+    task.style.fontFamily = 'sans-serif';
+    numberTask = randomRiddles();
+    task.innerText = String(numberTask);
+    let solutionArea = document.createElement('textarea');
+    solutionArea.setAttribute("required",true);
+    let enterButton = document.createElement('button');
+    enterButton.innerText = "Enter";
+    enterButton.style.fontSize = '1.5em';
+    taskWindow.appendChild(enterH2);
+    taskWindow.appendChild(task);
+    taskWindow.appendChild(solutionArea);
+    taskWindow.appendChild(enterButton);
+    document.getElementById('globalPlayWindow').appendChild(taskWindow);
+    enterButton.addEventListener('click',function(){     
+        checkSolutionRiddle(solutionArea.value);
+        taskWindow.style.display = 'none';
+        document.getElementById('spellbook').remove();
+    })
+}
+
 function check(solution){
 Math.round(solution);
 let taskArr = numberTask.split(' ');
@@ -329,6 +424,16 @@ else if(solution != trueAnswer){
     monsterFaerbolRender();
 }
 }
+
+function checkSolutionRiddle(solution){
+if(getKeyByValue(riddles, numberTask) == solution){
+    faerbolRender();
+}
+else if(getKeyByValue(riddles, numberTask) != solution){
+    monsterFaerbolRender();
+}
+}
+
 
 function faerbolRender(){
     let faerbol = document.createElement('img');
