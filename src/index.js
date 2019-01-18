@@ -57,6 +57,7 @@ function getKeyByValue( obj, value ) {
 
 // The main game loop
 let beginGame = true;
+let users = 0;
 let score = 0;
 let windowName;
 let nameArea;
@@ -100,8 +101,53 @@ align="center"
 type="audio/mid"
 pluginspage="http://www.macromedia.com/go/getflashplayer">
 </object>`);
+
+scoreButton.addEventListener('click', function(){
+    let additionalWindow = document.createElement('div');
+    additionalWindow.id = 'additionalWindow';
+    additionalWindow.style.position = 'absolute';
+    additionalWindow.style.width = 1900+'px';
+    additionalWindow.style.height = 930+'px';
+    screenButton.style.display ='none';
+    playButton.style.display ='none';
+    scoreButton.style.display ='none';
+    startMenu.style.position = 'absolute';
+    if(users){
+    let scoreTable = document.createElement('table');
+    let trName = document.createElement('tr');
+    let tdName = document.createElement('td');
+    tdName.innerText = 'Name';
+    trName.appendChild(tdName);
+    let tdScore = document.createElement('td');
+    tdScore.innerText = 'Score';
+    trName.appendChild(tdScore);
+    scoreTable.appendChild(trName);
+    for(let i = 0;i<users;i++){
+    let trToTh = document.createElement('tr');
+    let tdToName = document.createElement('td');
+    tdToName.innerText = nameArea.value;
+    trToTh.appendChild(tdToName);
+    let tdToScore = document.createElement('td');
+    tdToScore.innerText = score;
+    trToTh.appendChild(tdToScore);
+    scoreTable.appendChild(trToTh);
+    }
+    scoreTable.style.position = 'absolute';
+    scoreTable.style.zIndex = '1000';
+    additionalWindow.style.display = 'block';
+    additionalWindow.appendChild(scoreTable);  
+}
+document.body.appendChild(additionalWindow);
+createReturnButton();
+})
 startMenu.style.display = 'block';
 screenButton.addEventListener('click',function(){
+let additionalWindow = document.createElement('div');
+additionalWindow.id = 'additionalWindow';
+additionalWindow.style.position = 'absolute';
+additionalWindow.style.width = 1900+'px';
+additionalWindow.style.height = 930+'px';
+additionalWindow.style.top = 0;
 screenButton.style.display ='none';
 playButton.style.display ='none';
 scoreButton.style.display ='none';
@@ -111,7 +157,10 @@ imageGameplay.src = 'img/Gameplay.jpg';
 imageGameplay.style.position = 'absolute';
 imageGameplay.style.zIndex = '1000';
 imageGameplay.style.align = 'center';
-document.body.appendChild(imageGameplay);
+additionalWindow.style.display = 'block';
+additionalWindow.appendChild(imageGameplay);
+document.body.appendChild(additionalWindow);
+createReturnButton();
 });
 playButton.addEventListener('click',function(){
     startMenu.style.display = 'none';
@@ -127,6 +176,25 @@ startTheGame();
 
 let hpGg = 201;
 let hpMonster = hpGg;
+
+function createReturnButton(){
+    let ReturnButton = document.createElement('button');
+    ReturnButton.innerHTML = "&#9668";
+    ReturnButton.style.backgroundColor = "yellow";
+    ReturnButton.style.width = 50+'px';
+    ReturnButton.style.height = 25+'px';
+    ReturnButton.style.position = 'absolute';
+    ReturnButton.style.zIndex = '1000';
+    ReturnButton.addEventListener('click', function(){
+        ReturnButton.remove();
+        document.getElementById('additionalWindow').remove();
+        screenButton.style.display = 'inline-block';
+        playButton.style.display = 'inline-block';
+        scoreButton.style.display = 'inline-block';
+    })
+    document.body.appendChild(ReturnButton);   
+}
+
 
 function toRun(){
     let globalPlayWindow = document.createElement('div');
@@ -482,6 +550,7 @@ function monsterFaerbolRender(){
 
 function enterName() {
     if(!enteredNameYet){
+    users+=1;    
     windowName = document.createElement('div');
     windowName.style.zIndex = '1';
     windowName.style.bottom = '0';

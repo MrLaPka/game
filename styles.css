@@ -8,6 +8,17 @@ html, body {
 
 }
 
+table{
+    margin: auto;
+    border: 2px solid green; 
+    margin: auto; 
+}
+
+td{
+    text-align: center;
+    border: 1px solid green;
+}
+
 h1{
     text-align: center;
     color: white;
@@ -34,7 +45,8 @@ canvas {
 
 .info{
     left: 0; bottom: 0; /* Левый нижний угол */
-    position: fixed;
+    position: absolute;
+    z-index: 1010;
     width: 100%; /* Ширина слоя */
 }
 
