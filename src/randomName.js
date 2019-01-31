@@ -11,17 +11,17 @@ const firstName = [
     'Toothy'
     ]; 
     
-    const secondName = [ 
-        'Ogre', 
-        'Gnome', 
-        'Elf', 
-        'Giant', 
-        'Troll', 
-        'Zombie', 
-        'Orc', 
-        'Trent', 
-        'Centaur', 
-        'Spirit'
+const secondName = [ 
+    'Ogre', 
+    'Gnome', 
+    'Elf', 
+    'Giant', 
+    'Troll', 
+    'Zombie', 
+    'Orc', 
+    'Trent', 
+    'Centaur', 
+    'Spirit'
     ]; 
     
     const thirdName = [ 
@@ -38,9 +38,9 @@ const firstName = [
     ]; 
     
     function randomName(arr) { 
-    return arr[Math.floor(Math.random() * arr.length)]; 
+      return arr[Math.floor(Math.random() * arr.length)]; 
     } 
 
     export default function getMonsterName() { 
-        return `${randomName(firstName)} ${randomName(secondName)} ${randomName(thirdName)}`; 
-        }
+      return `${randomName(firstName)} ${randomName(secondName)} ${randomName(thirdName)}`; 
+    }

@@ -44,8 +44,9 @@ function randomRiddles(){
     return riddles[keys[Math.floor(Math.random() * keys.length)]];
 }
 
+
 function getKeyByValue( obj, value ) {
-    for( let prop in obj) {
+    for (let prop in obj) {
         if( obj.hasOwnProperty( prop ) ) {
              if( obj[ prop ] === value )
                  return prop;
@@ -58,16 +59,19 @@ function getKeyByValue( obj, value ) {
 // The main game loop
 let beginGame = true;
 let users = 0;
-let score = 0;
+let score;
 let windowName;
 let nameArea;
+let tableScore = [];
 let enteredNameYet = false;
+let playerName = [];
 let startMenu = document.createElement('div');
 startMenu.style.width = 1900+'px';
 startMenu.style.height = 930+'px';
 startMenu.align = 'center';
 startMenu.style.background = "url(img/fon_lenty_radiaciya_opasnost_stena_18526_1280x1280[1].jpg)";
 startMenu.style.backgroundSize = "100%";
+let isMainaudio = true;
 
 let playButton = document.createElement('button');
 playButton.innerText = "Play";
@@ -87,11 +91,8 @@ screenButton.style.backgroundColor = "yellow";
 screenButton.style.width = 200+'px';
 screenButton.style.height = 90+'px';
 startMenu.appendChild(screenButton);
-document.body.appendChild(startMenu);
-
-
-function init() {
-document.write(`<object width="0" height="0" align="center" id = "mainaudio">
+let audio = document.createElement('div');
+let innerAudio = `<object width="0" height="0" align="center" id = "mainaudio">
 <param name="movie" value="audio/BGsound.mp3">
 <embed src="audio/BGsound.mp3"
 autostart="true"
@@ -100,8 +101,13 @@ height="0"
 align="center"
 type="audio/mid"
 pluginspage="http://www.macromedia.com/go/getflashplayer">
-</object>`);
+</object>`;
+audio.innerHTML = innerAudio;
+startMenu.appendChild(audio);
+document.body.appendChild(startMenu);
 
+
+function init() {
 scoreButton.addEventListener('click', function(){
     let additionalWindow = document.createElement('div');
     additionalWindow.id = 'additionalWindow';
@@ -125,16 +131,17 @@ scoreButton.addEventListener('click', function(){
     for(let i = 0;i<users;i++){
     let trToTh = document.createElement('tr');
     let tdToName = document.createElement('td');
-    tdToName.innerText = nameArea.value;
+    tdToName.innerText = playerName[i];
     trToTh.appendChild(tdToName);
     let tdToScore = document.createElement('td');
-    tdToScore.innerText = score;
+    tdToScore.innerText = tableScore[i];
     trToTh.appendChild(tdToScore);
     scoreTable.appendChild(trToTh);
     }
-    scoreTable.style.position = 'absolute';
+    scoreTable.style.position = 'relative';
     scoreTable.style.zIndex = '1000';
     additionalWindow.style.display = 'block';
+    scoreTable.style.margin = 'auto';
     additionalWindow.appendChild(scoreTable);  
 }
 document.body.appendChild(additionalWindow);
@@ -164,7 +171,8 @@ createReturnButton();
 });
 playButton.addEventListener('click',function(){
     startMenu.style.display = 'none';
-    document.getElementById('mainaudio').setAttribute('hidden', 'true');
+    document.getElementById('info').display = 'none';
+    isMainaudio = true;
     enterName();
 });
 }
@@ -195,8 +203,10 @@ function createReturnButton(){
     document.body.appendChild(ReturnButton);   
 }
 
-
 function toRun(){
+    if(isMainaudio){
+    document.getElementById("mainaudio").remove();
+    }
     let globalPlayWindow = document.createElement('div');
     globalPlayWindow.id = 'globalPlayWindow';
     let playInGame = document.createElement('div');
@@ -214,6 +224,19 @@ function toRun(){
     globalPlayWindow.appendChild(gg);
     globalPlayWindow.appendChild(spellBook);
     globalPlayWindow.appendChild(monster);
+    let audioPlay = document.createElement('div');
+    audioPlay.innerHTML = `<object width="0" height="0" align="center" id = "mortalCombat">
+                                   <param name="movie" value="audio/glavnaya-tema-iz-8-bitnoy-igry-mortal-kombat.mp3">
+                                   <embed src="audio/glavnaya-tema-iz-8-bitnoy-igry-mortal-kombat.mp3"
+                                   autostart="true"
+                                   loop = "true"
+                                   width="0"
+                                   height="0"
+                                   align="center"
+                                   type="audio/mid"
+                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
+                                    </object>`;
+    globalPlayWindow.appendChild(audioPlay);
     document.body.appendChild(globalPlayWindow);
     ggRender(gg);
     spellBookButtonRender(spellBook);
@@ -491,9 +514,9 @@ function faerbolRender(){
     faerbol.style.position = 'absolute';
     faerbol.style.zIndex = '1000';
     faerbol.style.marginLeft = '410px';
-    faerbol.style.marginTop = '458px';
+    faerbol.style.marginTop = '430px';
     document.getElementById('globalPlayWindow').appendChild(faerbol);
-    $(faerbol).animate({left: "+=800"}, 2000);
+    $(faerbol).animate({left: "+=940"}, 2000);
     $(faerbol).queue(function() {
         $(this).hide();
         $(this).dequeue();
@@ -502,17 +525,45 @@ function faerbolRender(){
         hpMonster -= 67;
         document.getElementById('monsterhp').style.width= hpMonster + 'px';
         if(hpMonster == 0){
-        endWindow();
+            document.getElementById('mortalCombat').remove();
+            let audioMonsterDie = `<object width="0" height="0" align="center"style="position:relative;" id = "MonsterDie">
+                                   <param name="movie" value="audio/krik-orka.mp3">
+                                   <embed src="audio/krik-orka.mp3"
+                                   autostart="true"
+                                   width="0"
+                                   height="0"
+                                   align="center"
+                                   type="audio/mid"
+                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
+                                    </object>`;
+            document.getElementById('globalPlayWindow').innerHTML += audioMonsterDie;
+            setTimeout(endWindow,1500);
         }
         else{
             document.getElementById('spellbutton').disabled = false;
         }
         $(this).dequeue();
         });
+    let audioGetDamage = document.createElement('div');
         $(faerbol).queue(function() {
+            audioGetDamage.innerHTML = `    <object width="0" height="0" align="center" style="position:relative;" id = "getdamage">
+                                   <param name="movie" value="audio/muzhskie-stony (mp3cut.ru).mp3">
+                                   <embed src="audio/muzhskie-stony (mp3cut.ru).mp3"
+                                   autostart="true"
+                                   width="0"
+                                   height="0"
+                                   align="center"
+                                   type="audio/mid"
+                                   pluginspage="http://www.macromedia.com/go/getflashplayer">
+                                   </object>`;
+            document.getElementById('globalPlayWindow').appendChild(audioGetDamage);
             faerbol.remove();
             $(this).dequeue();
             });
+    $(audioGetDamage).queue(function () {
+        audioGetDamage.remove();
+        $(this).dequeue(); 
+    });
 }
 
 function monsterFaerbolRender(){
@@ -523,7 +574,7 @@ function monsterFaerbolRender(){
     faerbol.style.position = 'absolute';
     faerbol.style.zIndex = '1000';
     faerbol.style.marginLeft = '1250px';
-    faerbol.style.marginTop = '458px';
+    faerbol.style.marginTop = '430px';
     document.getElementById('globalPlayWindow').appendChild(faerbol);
     $(faerbol).animate({left: "-=815"}, 2000);
     $(faerbol).queue(function() {
@@ -534,6 +585,7 @@ function monsterFaerbolRender(){
         hpGg -= 67;
         document.getElementById('gghp').style.width= hpGg + 'px';
         if(hpGg == 0){
+            document.getElementById('mortalCombat').remove();
             endWindow();
             }
         else{
@@ -541,16 +593,31 @@ function monsterFaerbolRender(){
         }
         $(this).dequeue();
         });
-        
+    let audioGetDamage = document.createElement('div');
     $(faerbol).queue(function() {
+        audioGetDamage.innerHTML = `    <object width="0" height="0" align="center" id = "getdamage">
+                                   <param name="movie" value="audio/muzhskie-stony (mp3cut.ru).mp3">
+                                   <embed src="audio/muzhskie-stony (mp3cut.ru).mp3"
+                                   autostart="true"
+                                   width="0"
+                                   height="0"
+                                   align="center"
+                                   type="audio/mid"
+                                   pluginspage="http://www.macromedia.com/go/getflashplayer">
+                                   </object>`;
+        document.getElementById('globalPlayWindow').appendChild(audioGetDamage);
             faerbol.remove();
             $(this).dequeue();
             });
+    $(audioGetDamage).queue(function () {
+        audioGetDamage.remove();
+        $(this).dequeue();
+    });
 }
 
 function enterName() {
     if(!enteredNameYet){
-    users+=1;    
+    score = 0;
     windowName = document.createElement('div');
     windowName.style.zIndex = '1';
     windowName.style.bottom = '0';
@@ -585,6 +652,9 @@ function enterName() {
         }
         else{
         enteredNameYet = true;
+        playerName[users] = nameArea.value;
+        tableScore[users] = score; 
+        users += 1; 
         windowName.style.display = 'none';        
         toRun();
         }
@@ -595,7 +665,9 @@ else{
 }
 }
 function endWindow(){
-    score += Math.floor((201 - hpMonster)/2);
+    score = Math.floor((201 - hpMonster)/2);
+    tableScore[users-1] += score;
+    score = 0;
     let windowEnd = document.createElement('div');
     windowEnd.style.zIndex = '1';
     windowEnd.style.bottom = '0';
@@ -618,6 +690,16 @@ function endWindow(){
     if(capacity<3){
         capacity+=1;
         }
+        windowEnd.innerHTML += `<object width="0" height="0" align="center" id = "victory">
+                                   <param name="movie" value="audio/Sound_15630.mp3">
+                                   <embed src="audio/Sound_15630.mp3"
+                                   autostart="true"
+                                   width="0"
+                                   height="0"
+                                   align="center"
+                                   type="audio/mid"
+                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
+                                    </object>`;
     enterH2.innerText = "VICTORY";
     let NextRoundButton = document.createElement('button');
     NextRoundButton.innerText = "NEXT ROUND";
@@ -629,13 +711,24 @@ function endWindow(){
         hpGg = 201;
         hpMonster = hpGg;
         document.getElementById('globalPlayWindow').remove();
+        isMainaudio = false;
         toRun();
     }); 
     }
     else{
+    windowEnd.innerHTML += `<object width="0" height="0" align="center" id = "fail">
+                                <param name="movie" value="audio/pole_chudes_-_zvuk_proigrysha_(SongHouse.me).mp3">
+                                <embed src="audio/pole_chudes_-_zvuk_proigrysha_(SongHouse.me).mp3"
+                                autostart="true"
+                                width="0"
+                                height="0"
+                                align="center"
+                                type="audio/mid"
+                                pluginspage="http://www.macromedia.com/go/getflashplayer">
+                                </object>`;
     enterH2.innerText = "GAME OVER!";
     let ScorePlace = document.createElement('h3');
-    ScorePlace.innerText = "Score: " + score;
+    ScorePlace.innerText = "Score: " + tableScore[users - 1];
     ScorePlace.style.fontFamily = 'sans-serif';   
     let playAgainButton = document.createElement('button');
     playAgainButton.innerText = "PLAY AGAIN";
@@ -645,10 +738,10 @@ function endWindow(){
     windowEnd.appendChild(playAgainButton);
     playAgainButton.addEventListener('click',function(){
         windowEnd.remove();
-        score -= Math.floor((201 - hpMonster)/2);
         hpGg = 201;
         hpMonster = hpGg;
         document.getElementById('globalPlayWindow').remove();
+        isMainaudio = false;
         toRun();
         }); 
     }
@@ -662,14 +755,15 @@ function endWindow(){
         if(hpGg === 0){
         let cnf = confirm("If you exit the menu, the game will start again. Continue?");
         if(cnf){
+        enteredNameYet = false;
         capacity = 1;
-        score = 0;
         hpGg = 201;
         hpMonster = hpGg;
         windowEnd.remove();
         document.getElementById('globalPlayWindow').remove();
         startMenu.style.display = 'block';
-        document.getElementById('mainaudio').setAttribute('hidden', 'false');
+        document.getElementById('info').display = 'block'
+        audio.innerHTML = innerAudio;
         }
     }
     else if (hpMonster === 0){
@@ -678,7 +772,7 @@ function endWindow(){
         windowEnd.remove();
         document.getElementById('globalPlayWindow').remove();
         startMenu.style.display = 'block';
-        document.getElementById('mainaudio').setAttribute('hidden', 'false');
+        audio.innerHTML = innerAudio;
     }
         });   
 }

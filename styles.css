@@ -10,8 +10,9 @@ html, body {
 
 table{
     margin: auto;
-    border: 2px solid green; 
-    margin: auto; 
+    widows: 200px;
+    border: 2px solid green;
+    color: #fff; 
 }
 
 td{
@@ -22,6 +23,10 @@ td{
 h1{
     text-align: center;
     color: white;
+}
+
+button:hover{
+    cursor: pointer;
 }
 
 canvas {
@@ -43,7 +48,7 @@ canvas {
 
 }
 
-.info{
+#info{
     left: 0; bottom: 0; /* Левый нижний угол */
     position: absolute;
     z-index: 1010;
