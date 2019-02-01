@@ -1,6 +1,7 @@
 import getMonsterName from './randomName.js';
 import getOperation from './ariphmeticTask.js';
 import monsterRender from './monsterGeneration.js';
+import randomBackground from './backgroundsGeneration.js';
 const riddles = {
     "mouse":  `I live in the house.
     I eat everything.
@@ -65,33 +66,44 @@ let nameArea;
 let tableScore = [];
 let enteredNameYet = false;
 let playerName = [];
+let startFaerbol = document.createElement('img');
+startFaerbol.src = 'img/rotate.gif'
+startFaerbol.style.width   = '500px';
+startFaerbol.style.height  = '700px';
+startFaerbol.style.zIndex  = '1010';
+startFaerbol.style.margin  = 'auto';
+startFaerbol.style.display = 'block';
 let startMenu = document.createElement('div');
-startMenu.style.width = 1900+'px';
-startMenu.style.height = 930+'px';
+startMenu.style.width = 100+'%';
+startMenu.style.height = 100+'%';
 startMenu.align = 'center';
 startMenu.style.background = "url(img/fon_lenty_radiaciya_opasnost_stena_18526_1280x1280[1].jpg)";
 startMenu.style.backgroundSize = "100%";
 let isMainaudio = true;
-
+const information = document.getElementById("info");
+let getDamageYet = false;
+let nameOfGame = document.createElement('h1');
+nameOfGame.innerText = 'MONSTER KILL';
+nameOfGame.id = 'nameOfGame';
+startMenu.appendChild(nameOfGame);
 let playButton = document.createElement('button');
 playButton.innerText = "Play";
-playButton.style.backgroundColor = "yellow";
 playButton.style.width = 200+'px';
 playButton.style.height = 90+'px';
 startMenu.appendChild(playButton);
 let scoreButton = document.createElement('button');
 scoreButton.innerText = "Score";
-scoreButton.style.backgroundColor = "yellow";
 scoreButton.style.width = 200+'px';
 scoreButton.style.height = 90+'px';
 startMenu.appendChild(scoreButton);
 let screenButton = document.createElement('button');
 screenButton.innerText = "A screenshot of gameplay";
-screenButton.style.backgroundColor = "yellow";
 screenButton.style.width = 200+'px';
 screenButton.style.height = 90+'px';
 startMenu.appendChild(screenButton);
 let audio = document.createElement('div');
+audio.style.width  = '0%';
+audio.style.height = '0%';
 let innerAudio = `<object width="0" height="0" align="center" id = "mainaudio">
 <param name="movie" value="audio/BGsound.mp3">
 <embed src="audio/BGsound.mp3"
@@ -104,6 +116,7 @@ pluginspage="http://www.macromedia.com/go/getflashplayer">
 </object>`;
 audio.innerHTML = innerAudio;
 startMenu.appendChild(audio);
+startMenu.appendChild(startFaerbol);
 document.body.appendChild(startMenu);
 
 
@@ -112,11 +125,13 @@ scoreButton.addEventListener('click', function(){
     let additionalWindow = document.createElement('div');
     additionalWindow.id = 'additionalWindow';
     additionalWindow.style.position = 'absolute';
-    additionalWindow.style.width = 1900+'px';
-    additionalWindow.style.height = 930+'px';
+    additionalWindow.style.width = 100+'%';
+    additionalWindow.style.height = 100+'%';
     screenButton.style.display ='none';
     playButton.style.display ='none';
     scoreButton.style.display ='none';
+    document.getElementById('nameOfGame').style.display = 'none';
+    startFaerbol.style.display = 'none';
     startMenu.style.position = 'absolute';
     if(users){
     let scoreTable = document.createElement('table');
@@ -152,18 +167,22 @@ screenButton.addEventListener('click',function(){
 let additionalWindow = document.createElement('div');
 additionalWindow.id = 'additionalWindow';
 additionalWindow.style.position = 'absolute';
-additionalWindow.style.width = 1900+'px';
-additionalWindow.style.height = 930+'px';
+additionalWindow.style.width = 100+'%';
+additionalWindow.style.height = 100+'%';
 additionalWindow.style.top = 0;
+additionalWindow.style.bottom = 0;
 screenButton.style.display ='none';
 playButton.style.display ='none';
 scoreButton.style.display ='none';
+startFaerbol.style.display = 'none';
 startMenu.style.position = 'absolute';
 let imageGameplay = document.createElement('img');
-imageGameplay.src = 'img/Gameplay.jpg';
-imageGameplay.style.position = 'absolute';
-imageGameplay.style.zIndex = '1000';
-imageGameplay.style.align = 'center';
+imageGameplay.src = 'img/Gameplay.png';
+imageGameplay.style.zIndex   = '1000';
+imageGameplay.style.height   = '70%';
+imageGameplay.style.width    = '80%';
+imageGameplay.style.margin   = 'auto';
+imageGameplay.style.display  = 'block';
 additionalWindow.style.display = 'block';
 additionalWindow.appendChild(imageGameplay);
 document.body.appendChild(additionalWindow);
@@ -171,7 +190,7 @@ createReturnButton();
 });
 playButton.addEventListener('click',function(){
     startMenu.style.display = 'none';
-    document.getElementById('info').display = 'none';
+    document.getElementById("info").remove();
     isMainaudio = true;
     enterName();
 });
@@ -188,7 +207,6 @@ let hpMonster = hpGg;
 function createReturnButton(){
     let ReturnButton = document.createElement('button');
     ReturnButton.innerHTML = "&#9668";
-    ReturnButton.style.backgroundColor = "yellow";
     ReturnButton.style.width = 50+'px';
     ReturnButton.style.height = 25+'px';
     ReturnButton.style.position = 'absolute';
@@ -199,22 +217,23 @@ function createReturnButton(){
         screenButton.style.display = 'inline-block';
         playButton.style.display = 'inline-block';
         scoreButton.style.display = 'inline-block';
+        startFaerbol.style.display = 'block';
+        document.getElementById('nameOfGame').style.display = 'block';
     })
     document.body.appendChild(ReturnButton);   
 }
 
 function toRun(){
+    windowName.remove();
     if(isMainaudio){
     document.getElementById("mainaudio").remove();
     }
     let globalPlayWindow = document.createElement('div');
     globalPlayWindow.id = 'globalPlayWindow';
     let playInGame = document.createElement('div');
-    playInGame.style.marginTop = '100px';
-    playInGame.style.marginLeft= '300px';
-    playInGame.style.width = '1400px';
-    playInGame.style.height = '700px';
-    playInGame.style.background = "url(img/terrain.png)";
+    playInGame.style.width = '100%';
+    playInGame.style.height = '100%';
+    playInGame.style.background = `url(${randomBackground()})`;
     playInGame.style.backgroundSize = "100%";
     playInGame.style.position = "absolute";
     let gg = document.createElement('div');
@@ -225,6 +244,8 @@ function toRun(){
     globalPlayWindow.appendChild(spellBook);
     globalPlayWindow.appendChild(monster);
     let audioPlay = document.createElement('div');
+    audioPlay.style.width = '0%';
+    audioPlay.style.height = '0%';
     audioPlay.innerHTML = `<object width="0" height="0" align="center" id = "mortalCombat">
                                    <param name="movie" value="audio/glavnaya-tema-iz-8-bitnoy-igry-mortal-kombat.mp3">
                                    <embed src="audio/glavnaya-tema-iz-8-bitnoy-igry-mortal-kombat.mp3"
@@ -286,7 +307,6 @@ let pName = document.createElement('p');
 pName.innerText = nameArea.value;
 pName.style.color = 'white';
 pName.style.fontSize = '30px';
-pName.style.fontFamily = 'matura mt script capitals';
 nameGg.appendChild(pName);
 document.getElementById('globalPlayWindow').appendChild(nameGg);
 }
@@ -332,7 +352,12 @@ function spellBookButtonRender(spellBook){
 
 }
 
+
 function spellBookRender(){
+    if(getDamageYet){
+        document.getElementById('getDamage').remove();
+        getDamageYet = false;
+    }
     let spellBookMain = document.createElement('div');
     spellBookMain.style.marginTop = '20px';
     spellBookMain.style.marginLeft= '450px';
@@ -439,7 +464,7 @@ function riddlesGeneration(){
     taskWindow.style.left = '0';
     taskWindow.style.top = '0';
     taskWindow.style.position = 'absolute';
-    taskWindow.style.height = '400px';
+    taskWindow.style.height = '500px';
     taskWindow.style.width = '512px';
     taskWindow.style.margin = 'auto';
     taskWindow.style.backgroundColor = 'black';
@@ -505,7 +530,6 @@ else if(getKeyByValue(riddles, numberTask) != solution){
 }
 }
 
-
 function faerbolRender(){
     let faerbol = document.createElement('img');
     faerbol.src = 'img/faerbol.gif';
@@ -545,8 +569,12 @@ function faerbolRender(){
         $(this).dequeue();
         });
     let audioGetDamage = document.createElement('div');
+    audioGetDamage.style.width = '0%';
+    audioGetDamage.style.height = '0%';
+    audioGetDamage.id = 'getDamage';
         $(faerbol).queue(function() {
-            audioGetDamage.innerHTML = `    <object width="0" height="0" align="center" style="position:relative;" id = "getdamage">
+            getDamageYet = true;
+            audioGetDamage.innerHTML = `<object width="0" height="0" align="center" style="position:relative;" id = "getdamage">
                                    <param name="movie" value="audio/muzhskie-stony (mp3cut.ru).mp3">
                                    <embed src="audio/muzhskie-stony (mp3cut.ru).mp3"
                                    autostart="true"
@@ -557,11 +585,10 @@ function faerbolRender(){
                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
                                    </object>`;
             document.getElementById('globalPlayWindow').appendChild(audioGetDamage);
-            faerbol.remove();
             $(this).dequeue();
             });
-    $(audioGetDamage).queue(function () {
-        audioGetDamage.remove();
+    $(faerbol).queue(function () {
+        faerbol.remove();
         $(this).dequeue(); 
     });
 }
@@ -594,7 +621,11 @@ function monsterFaerbolRender(){
         $(this).dequeue();
         });
     let audioGetDamage = document.createElement('div');
+    audioGetDamage.style.width = '0%';
+    audioGetDamage.style.height = '0%';
+    audioGetDamage.id = 'getDamage';
     $(faerbol).queue(function() {
+        getDamageYet = true;
         audioGetDamage.innerHTML = `    <object width="0" height="0" align="center" id = "getdamage">
                                    <param name="movie" value="audio/muzhskie-stony (mp3cut.ru).mp3">
                                    <embed src="audio/muzhskie-stony (mp3cut.ru).mp3"
@@ -606,11 +637,10 @@ function monsterFaerbolRender(){
                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
                                    </object>`;
         document.getElementById('globalPlayWindow').appendChild(audioGetDamage);
-            faerbol.remove();
             $(this).dequeue();
             });
-    $(audioGetDamage).queue(function () {
-        audioGetDamage.remove();
+    $(faerbol).queue(function () {
+        faerbol.remove();
         $(this).dequeue();
     });
 }
@@ -625,7 +655,7 @@ function enterName() {
     windowName.style.left = '0';
     windowName.style.top = '0';
     windowName.style.position = 'absolute';
-    windowName.style.height = '200px';
+    windowName.style.height = '400px';
     windowName.style.width = '512px';
     windowName.style.margin = 'auto';
     windowName.style.backgroundColor = 'black';
@@ -638,10 +668,12 @@ function enterName() {
     enterH2.style.fontFamily = 'sans-serif';
     enterH2.innerText = "Enter your name: ";
     nameArea = document.createElement('textarea');
-    nameArea.setAttribute("required",true);
+    nameArea.style.display = 'inline-block';
     let enterButton = document.createElement('button');
     enterButton.innerText = "Enter";
     enterButton.style.fontSize = '1.5em';
+    enterButton.style.display  = 'inline-block';
+    enterButton.style.margin   = '10px';
     windowName.appendChild(enterH2);
     windowName.appendChild(nameArea);
     windowName.appendChild(enterButton);
@@ -666,8 +698,6 @@ else{
 }
 function endWindow(){
     score = Math.floor((201 - hpMonster)/2);
-    tableScore[users-1] += score;
-    score = 0;
     let windowEnd = document.createElement('div');
     windowEnd.style.zIndex = '1';
     windowEnd.style.bottom = '0';
@@ -707,11 +737,14 @@ function endWindow(){
     windowEnd.appendChild(enterH2);
     windowEnd.appendChild(NextRoundButton);
     NextRoundButton.addEventListener('click',function(){
+        tableScore[users - 1] += score;
+        score = 0;
         windowEnd.remove();
         hpGg = 201;
         hpMonster = hpGg;
         document.getElementById('globalPlayWindow').remove();
         isMainaudio = false;
+        getDamageYet = false;
         toRun();
     }); 
     }
@@ -738,10 +771,13 @@ function endWindow(){
     windowEnd.appendChild(playAgainButton);
     playAgainButton.addEventListener('click',function(){
         windowEnd.remove();
+        score = 0;
         hpGg = 201;
         hpMonster = hpGg;
+        tableScore[users]-=score;
         document.getElementById('globalPlayWindow').remove();
         isMainaudio = false;
+        getDamageYet = false;
         toRun();
         }); 
     }
@@ -752,9 +788,12 @@ function endWindow(){
     document.body.appendChild(windowEnd);
     beginGame = false;
     mainMenuButton.addEventListener('click',function(){
+        getDamageYet = false;
         if(hpGg === 0){
         let cnf = confirm("If you exit the menu, the game will start again. Continue?");
         if(cnf){
+        tableScore[users - 1] += score;
+        score = 0;
         enteredNameYet = false;
         capacity = 1;
         hpGg = 201;
@@ -762,17 +801,20 @@ function endWindow(){
         windowEnd.remove();
         document.getElementById('globalPlayWindow').remove();
         startMenu.style.display = 'block';
-        document.getElementById('info').display = 'block'
         audio.innerHTML = innerAudio;
+        document.body.appendChild(information);
         }
     }
     else if (hpMonster === 0){
         hpGg = 201;
         hpMonster = hpGg;
+        tableScore[users - 1] += score;
+        score = 0;
         windowEnd.remove();
         document.getElementById('globalPlayWindow').remove();
         startMenu.style.display = 'block';
         audio.innerHTML = innerAudio;
+        document.body.appendChild(information);
     }
         });   
 }

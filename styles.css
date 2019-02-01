@@ -1,23 +1,32 @@
+*{
+    font-family: matura mt script capitals;
+}
 html, body {
-
-    margin: 0;
-
-    padding: 0;
-
+    margin:  0%;
+    padding: 0%;
+    height: 100%;
     background-color: #151515;
 
 }
 
+textarea{
+    background-color: burlywood;
+    border-radius: 20%;
+    font-size: 30px;
+}
+
 table{
     margin: auto;
-    widows: 200px;
-    border: 2px solid green;
-    color: #fff; 
+    width: 400px;
+    border: 5px solid green;
+    color: #fff;
 }
 
 td{
     text-align: center;
-    border: 1px solid green;
+    border: 4px solid green;
+    height: 50px;
+    font-size: 30px;
 }
 
 h1{
@@ -25,28 +34,20 @@ h1{
     color: white;
 }
 
+button{
+    border-radius: 10%;
+    transition: 1s;
+    background-color: yellow;
+    font-size: 15px;
+}
+
 button:hover{
     cursor: pointer;
+    color:aqua;
+    transition: 1s;
+    background-color:violet;
 }
 
-canvas {
-    display: block;
-
-    margin: auto;
-
-
-
-    position: absolute;
-
-    top: 0;
-
-    bottom: 0;
-
-    left: 0;
-
-    right: 0;
-
-}
 
 #info{
     left: 0; bottom: 0; /* Левый нижний угол */
