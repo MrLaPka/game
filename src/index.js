@@ -2,6 +2,11 @@ import getMonsterName from './randomName.js';
 import getOperation from './ariphmeticTask.js';
 import monsterRender from './monsterGeneration.js';
 import randomBackground from './backgroundsGeneration.js';
+import ggRender from './ggRender.js';
+import interfaceGgRender from './interfaceGgRender.js';
+import interfaceMonsterRender from './interfaceMonsterRender.js';
+import spellBookButtonRender from './spellBookButtonRender.js';
+
 const riddles = {
     "mouse":  `I live in the house.
     I eat everything.
@@ -22,6 +27,31 @@ const riddles = {
     And a tail at the end
     You might hear me barking
     And I’m known as man’s best friend.`,
+
+    "spider": `I am small.
+    I can be scary.
+    I have eight legs.
+    I spin a web.`,
+
+    "rainbow": `I am purple, yellow, red, and green
+    The King cannot reach me and neither can the Queen.
+    I show my colours after the rain
+    And only when the sun comes out again.`,
+
+    "sky": `Higher than a house,
+    Higher than a tree –
+    Oh, whatever can that be?`,
+
+    "potato": `I am the most popular vegetable.
+    I grow underground.
+    I cannot be eaten raw.
+    You can cook me in many ways.
+    Children adore me.`,
+
+    "teacher": `I use markers or chalk.
+    I work in a school.
+    I have students.
+    I give homework.`,
 
     "rain":  `I am asked to come,
     I am waited for;
@@ -68,8 +98,8 @@ let enteredNameYet = false;
 let playerName = [];
 let startFaerbol = document.createElement('img');
 startFaerbol.src = 'img/rotate.gif'
-startFaerbol.style.width   = '500px';
-startFaerbol.style.height  = '700px';
+startFaerbol.style.width = '31.250em';
+startFaerbol.style.height = '43.750em';
 startFaerbol.style.zIndex  = '1010';
 startFaerbol.style.margin  = 'auto';
 startFaerbol.style.display = 'block';
@@ -88,18 +118,19 @@ nameOfGame.id = 'nameOfGame';
 startMenu.appendChild(nameOfGame);
 let playButton = document.createElement('button');
 playButton.innerText = "Play";
-playButton.style.width = 200+'px';
-playButton.style.height = 90+'px';
+playButton.style.width = '12.500em';
+playButton.style.height = '5.625em';
 startMenu.appendChild(playButton);
 let scoreButton = document.createElement('button');
 scoreButton.innerText = "Score";
-scoreButton.style.width = 200+'px';
-scoreButton.style.height = 90+'px';
+scoreButton.style.width = '12.500em';
+scoreButton.style.height = '5.625em';
 startMenu.appendChild(scoreButton);
 let screenButton = document.createElement('button');
 screenButton.innerText = "A screenshot of gameplay";
-screenButton.style.width = 200+'px';
-screenButton.style.height = 90+'px';
+screenButton.style.width = '12.500em';
+screenButton.style.height = '5.625em';
+screenButton.style.paddingTop = '1.48em';
 startMenu.appendChild(screenButton);
 let audio = document.createElement('div');
 audio.style.width  = '0%';
@@ -201,14 +232,66 @@ init();
 }
 startTheGame();
 
-let hpGg = 201;
+function enterName() {
+    if (!enteredNameYet) {
+        score = 0;
+        windowName = document.createElement('div');
+        windowName.style.zIndex = '1';
+        windowName.style.bottom = '0';
+        windowName.style.right = '0';
+        windowName.style.left = '0';
+        windowName.style.top = '0';
+        windowName.style.position = 'absolute';
+        windowName.style.height = '25.000em';
+        windowName.style.width = '32.000em';
+        windowName.style.margin = 'auto';
+        windowName.style.backgroundColor = 'black';
+        windowName.style.opacity = '.5';
+        windowName.style.color = 'white';
+        windowName.style.textAlign = 'center';
+        windowName.style.display = 'block';
+        let enterH2 = document.createElement('h2');
+        enterH2.style.fontSize = '3em';
+        enterH2.style.fontFamily = 'sans-serif';
+        enterH2.innerText = "Enter your name: ";
+        nameArea = document.createElement('textarea');
+        nameArea.style.display = 'inline-block';
+        let enterButton = document.createElement('button');
+        enterButton.innerText = "Enter";
+        enterButton.style.fontSize = '1.5em';
+        enterButton.style.display = 'inline-block';
+        enterButton.style.margin = '0.625em';
+        windowName.appendChild(enterH2);
+        windowName.appendChild(nameArea);
+        windowName.appendChild(enterButton);
+        document.body.appendChild(windowName);
+        enterButton.addEventListener('click', function () {
+            if (!nameArea.value.match(/\w/)) {
+                alert("Please enter you nickname to continue!")
+            }
+            else {
+                enteredNameYet = true;
+                playerName[users] = nameArea.value;
+                tableScore[users] = score;
+                users += 1;
+                windowName.style.display = 'none';
+                toRun();
+            }
+        })
+    }
+    else {
+        toRun();
+    }
+}
+
+let hpGg = 12.563;
 let hpMonster = hpGg;
 
 function createReturnButton(){
     let ReturnButton = document.createElement('button');
     ReturnButton.innerHTML = "&#9668";
-    ReturnButton.style.width = 50+'px';
-    ReturnButton.style.height = 25+'px';
+    ReturnButton.style.width = '3.125em';
+    ReturnButton.style.height = '1.563em';
     ReturnButton.style.position = 'absolute';
     ReturnButton.style.zIndex = '1000';
     ReturnButton.addEventListener('click', function(){
@@ -230,16 +313,13 @@ function toRun(){
     }
     let globalPlayWindow = document.createElement('div');
     globalPlayWindow.id = 'globalPlayWindow';
-    let playInGame = document.createElement('div');
-    playInGame.style.width = '100%';
-    playInGame.style.height = '100%';
-    playInGame.style.background = `url(${randomBackground()})`;
-    playInGame.style.backgroundSize = "100%";
-    playInGame.style.position = "absolute";
-    let gg = document.createElement('div');
+    globalPlayWindow.style.width = '100%';
+    globalPlayWindow.style.height = '100%';
+    globalPlayWindow.style.background = `url(${randomBackground()})`;
+    globalPlayWindow.style.backgroundSize = "100%";
+    let gg = document.createElement('img');
     let monster = document.createElement('div');
     let spellBook = document.createElement('button');
-    globalPlayWindow.appendChild(playInGame);
     globalPlayWindow.appendChild(gg);
     globalPlayWindow.appendChild(spellBook);
     globalPlayWindow.appendChild(monster);
@@ -262,95 +342,14 @@ function toRun(){
     ggRender(gg);
     spellBookButtonRender(spellBook);
     monsterRender(monster);
-    interfaceGgRender(hpGg);
-    interfaceMonsterRender(hpMonster);
+    interfaceGgRender(hpGg, nameArea.value);
+    interfaceMonsterRender(hpMonster, getMonsterName());
     spellBook.addEventListener('click', function(){
         spellBook.disabled = true;
         spellBookRender();
     })
 }
 
-
-function ggRender(gg){
-gg.style.position = "absolute";
-gg.style.zIndex = "1000";
-gg.style.marginLeft = "350px";
-gg.style.marginTop = "400px";
-gg.style.width = '175px';
-gg.style.height = '160px';
-gg.style.background = "url(img/gg.png)";
-gg.style.backgroundSize = '100%';
-}
-
-function interfaceGgRender(hpGg){  
-let hp = document.createElement('div');
-hp.style.marginTop = '150px';
-hp.style.marginLeft = '330px';
-hp.id = 'gghp'; 
-hp.style.width = hpGg+'px';
-hp.style.height = '20px';
-hp.style.background = "repeating-linear-gradient(-45deg,#606dbc,#606dbc 10px,#465298 10px,#465298 20px)";
-hp.style.zIndex = '1000';
-hp.style.display = "inline-block";
-hp.style.position = "absolute";
-document.getElementById('globalPlayWindow').appendChild(hp);
-let nameGg = document.createElement('div');
-nameGg.style.marginTop = '70px';
-nameGg.style.marginLeft = '350px'; 
-nameGg.style.width = '300px';
-nameGg.style.height = '30px';
-nameGg.style.zIndex = '1000';
-nameGg.style.display = "inline-block";
-nameGg.style.position = "absolute";
-nameGg.id = 'namegg';
-let pName = document.createElement('p');
-pName.innerText = nameArea.value;
-pName.style.color = 'white';
-pName.style.fontSize = '30px';
-nameGg.appendChild(pName);
-document.getElementById('globalPlayWindow').appendChild(nameGg);
-}
-
-function interfaceMonsterRender(hpMonster){  
-    let hp = document.createElement('div');
-    hp.style.marginTop = '150px';
-    hp.id = 'monsterhp';
-    hp.style.marginLeft = '1370px'; 
-    hp.style.width = hpMonster+'px';
-    hp.style.height = '20px';
-    hp.style.background = "repeating-linear-gradient(45deg,#606dbc,#606dbc 10px,#465298 10px,#465298 20px)";
-    hp.style.zIndex = '1000';
-    hp.style.display = "inline-block";
-    hp.style.position = "absolute";
-    document.getElementById('globalPlayWindow').appendChild(hp);
-    let nameMonster = document.createElement('div');
-    nameMonster.style.marginTop = '70px';
-    nameMonster.style.marginLeft = '1270px'; 
-    nameMonster.style.width = '400px';
-    nameMonster.style.height = '30px';
-    nameMonster.style.zIndex = '1000';
-    nameMonster.style.display = "inline-block";
-    nameMonster.style.position = "absolute";
-    nameMonster.id = 'namemonster';
-    let pName = document.createElement('p');
-    pName.innerText = getMonsterName();
-    pName.style.color = 'white';
-    pName.style.fontSize = '30px';
-    pName.style.fontFamily = 'matura mt script capitals';
-    nameMonster.appendChild(pName);
-document.getElementById('globalPlayWindow').appendChild(nameMonster);
-    }
-    
-
-function spellBookButtonRender(spellBook){
-    spellBook.innerText = "Spellbook";
-    spellBook.style.marginLeft = "940px";
-    spellBook.style.marginTop = '130px';
-    spellBook.style.position = "absolute";
-    spellBook.style.zIndex = "1010";
-    spellBook.id = 'spellbutton';
-
-}
 
 
 function spellBookRender(){
@@ -359,11 +358,11 @@ function spellBookRender(){
         getDamageYet = false;
     }
     let spellBookMain = document.createElement('div');
-    spellBookMain.style.marginTop = '20px';
-    spellBookMain.style.marginLeft= '450px';
+    spellBookMain.style.marginTop = '1.250em';
+    spellBookMain.style.marginLeft = '28.125em';
     spellBookMain.style.zIndex = "1000";
-    spellBookMain.style.width = '1050px';
-    spellBookMain.style.height = '800px';
+    spellBookMain.style.width = '65.625em';
+    spellBookMain.style.height = '47.000em';
     spellBookMain.style.background = "url(img/spellbook.png)";
     spellBookMain.style.backgroundSize = "100%";
     spellBookMain.style.position = "absolute";
@@ -372,9 +371,9 @@ function spellBookRender(){
     pToChoose.innerText = 'Please select a spell';
     pToChoose.style.align = 'center';
     pToChoose.style.display = 'block';
-    pToChoose.style.paddingTop = '180px';
-    pToChoose.style.paddingLeft= '225px';
-    pToChoose.style.fontSize = '40px';
+    pToChoose.style.paddingTop = '4.250em';
+    pToChoose.style.paddingLeft = '5.5em';
+    pToChoose.style.fontSize = '2.500em';
     pToChoose.style.fontFamily = 'COMMERCIALSCRIPT BT';
     pToChoose.style.color = '#0000ff';
     spellBookMain.appendChild(pToChoose);
@@ -382,9 +381,9 @@ function spellBookRender(){
     ariphmeticButton.innerText = "Solve the example";
     ariphmeticButton.style.display = 'inline-block';
     ariphmeticButton.style.backgroundColor = "yellow";
-    ariphmeticButton.style.width = 200+'px';
-    ariphmeticButton.style.height = 90+'px';
-    ariphmeticButton.style.marginLeft= '250px';
+    ariphmeticButton.style.width = '12.500em';
+    ariphmeticButton.style.height = '5.625em';
+    ariphmeticButton.style.marginLeft = '15.625em';
     ariphmeticButton.addEventListener('click',function(){
     taskGeneration();
     spellBookMain.style.display = 'none';
@@ -394,9 +393,9 @@ function spellBookRender(){
     puzzleButton.innerText = "Guess the puzzle";
     puzzleButton.style.display = 'inline-block';
     puzzleButton.style.backgroundColor = "yellow";
-    puzzleButton.style.width = 200+'px';
-    puzzleButton.style.height = 90+'px';         
-    puzzleButton.style.marginLeft= '100px';
+    puzzleButton.style.width = '12.500em';
+    puzzleButton.style.height = '5.625em';         
+    puzzleButton.style.marginLeft = '6.250em';
     puzzleButton.addEventListener('click',function(){
     riddlesGeneration();
     spellBookMain.style.display = 'none';
@@ -417,8 +416,8 @@ function taskGeneration(){
     taskWindow.style.left = '0';
     taskWindow.style.top = '0';
     taskWindow.style.position = 'absolute';
-    taskWindow.style.height = '400px';
-    taskWindow.style.width = '512px';
+    taskWindow.style.height = '25.000em';
+    taskWindow.style.width = '32.000em';
     taskWindow.style.margin = 'auto';
     taskWindow.style.backgroundColor = 'black';
     taskWindow.style.opacity = '.5';
@@ -434,7 +433,6 @@ function taskGeneration(){
     numberTask = getOperation(capacity);
     task.innerText = numberTask;
     let solutionArea = document.createElement('textarea');
-    solutionArea.setAttribute("required",true);
     let enterButton = document.createElement('button');
     enterButton.innerText = "Enter";
     enterButton.style.fontSize = '1.5em';
@@ -464,8 +462,8 @@ function riddlesGeneration(){
     taskWindow.style.left = '0';
     taskWindow.style.top = '0';
     taskWindow.style.position = 'absolute';
-    taskWindow.style.height = '500px';
-    taskWindow.style.width = '512px';
+    taskWindow.style.height = '31.250em';
+    taskWindow.style.width = '32.000em';
     taskWindow.style.margin = 'auto';
     taskWindow.style.backgroundColor = 'black';
     taskWindow.style.opacity = '.5';
@@ -481,7 +479,6 @@ function riddlesGeneration(){
     numberTask = randomRiddles();
     task.innerText = String(numberTask);
     let solutionArea = document.createElement('textarea');
-    solutionArea.setAttribute("required",true);
     let enterButton = document.createElement('button');
     enterButton.innerText = "Enter";
     enterButton.style.fontSize = '1.5em';
@@ -533,12 +530,12 @@ else if(getKeyByValue(riddles, numberTask) != solution){
 function faerbolRender(){
     let faerbol = document.createElement('img');
     faerbol.src = 'img/faerbol.gif';
-    faerbol.style.width = '160px';
-    faerbol.style.height = '70px';
+    faerbol.style.width = '10.000em';
+    faerbol.style.height = '4.375em';
     faerbol.style.position = 'absolute';
     faerbol.style.zIndex = '1000';
-    faerbol.style.marginLeft = '410px';
-    faerbol.style.marginTop = '430px';
+    faerbol.style.marginLeft = '25.625em';
+    faerbol.style.marginTop = '26.875em';
     document.getElementById('globalPlayWindow').appendChild(faerbol);
     $(faerbol).animate({left: "+=940"}, 2000);
     $(faerbol).queue(function() {
@@ -546,9 +543,9 @@ function faerbolRender(){
         $(this).dequeue();
         });
         $(faerbol).queue(function() {
-        hpMonster -= 67;
-        document.getElementById('monsterhp').style.width= hpMonster + 'px';
-        if(hpMonster == 0){
+        hpMonster -= 4.1876;
+        document.getElementById('monsterhp').style.width= hpMonster + 'em';
+        if(Math.round(hpMonster) === 0){
             document.getElementById('mortalCombat').remove();
             let audioMonsterDie = `<object width="0" height="0" align="center"style="position:relative;" id = "MonsterDie">
                                    <param name="movie" value="audio/krik-orka.mp3">
@@ -561,7 +558,19 @@ function faerbolRender(){
                                     pluginspage="http://www.macromedia.com/go/getflashplayer">
                                     </object>`;
             document.getElementById('globalPlayWindow').innerHTML += audioMonsterDie;
-            setTimeout(endWindow,1500);
+                setTimeout(function () {
+                    monster.style.marginLeft = "88.938em";
+                    monster.style.marginTop = "20em";
+                    monster.innerHTML = '<img src ="img/vzrbIV.gif">';
+                }, 500);
+            setTimeout(function () {
+                monster.style.marginTop = "9em";
+                monster.style.marginLeft = "83em";
+                monster.innerHTML = '<img src ="img/faer.gif">';
+            }, 1500);
+            setTimeout(function () {
+                endWindow();
+            }, 500);
         }
         else{
             document.getElementById('spellbutton').disabled = false;
@@ -585,6 +594,10 @@ function faerbolRender(){
                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
                                    </object>`;
             document.getElementById('globalPlayWindow').appendChild(audioGetDamage);
+            document.getElementById('monster').style.filter = 'hue-rotate(290deg)';
+            setTimeout(function(){
+            document.getElementById('monster').style.filter = 'hue-rotate(360deg)';   
+            },1000);
             $(this).dequeue();
             });
     $(faerbol).queue(function () {
@@ -596,22 +609,30 @@ function faerbolRender(){
 function monsterFaerbolRender(){
     let faerbol = document.createElement('img');
     faerbol.src = 'img/monsterfaerbol1.gif';
-    faerbol.style.width = '160px';
-    faerbol.style.height = '70px';
+    faerbol.style.width = '10.000em';
+    faerbol.style.height = '4.375em';
     faerbol.style.position = 'absolute';
     faerbol.style.zIndex = '1000';
-    faerbol.style.marginLeft = '1250px';
-    faerbol.style.marginTop = '430px';
+    faerbol.style.marginLeft = '78.125em';
+    faerbol.style.marginTop = '26.875em';
     document.getElementById('globalPlayWindow').appendChild(faerbol);
-    $(faerbol).animate({left: "-=815"}, 2000);
+    $('#leftArm').toggleClass('transform');
+    $('#weapon').toggleClass('transform');
+    setTimeout($(faerbol).animate({left: "-=815"}, 2000),600);
+    setTimeout(function(){
+        $('#leftArm').toggleClass('transform');
+        setTimeout(function () {
+        $('#weapon').toggleClass('transform');
+        }, 0);  
+    }, 600);
     $(faerbol).queue(function() {
         $(this).hide();
         $(this).dequeue();
         });
     $(faerbol).queue(function() {
-        hpGg -= 67;
-        document.getElementById('gghp').style.width= hpGg + 'px';
-        if(hpGg == 0){
+        hpGg -= 4.1876;
+        document.getElementById('gghp').style.width= hpGg + 'em';
+        if(Math.round(hpGg) === 0){
             document.getElementById('mortalCombat').remove();
             endWindow();
             }
@@ -626,7 +647,7 @@ function monsterFaerbolRender(){
     audioGetDamage.id = 'getDamage';
     $(faerbol).queue(function() {
         getDamageYet = true;
-        audioGetDamage.innerHTML = `    <object width="0" height="0" align="center" id = "getdamage">
+        audioGetDamage.innerHTML = `<object width="0" height="0" align="center" id = "getdamage">
                                    <param name="movie" value="audio/muzhskie-stony (mp3cut.ru).mp3">
                                    <embed src="audio/muzhskie-stony (mp3cut.ru).mp3"
                                    autostart="true"
@@ -637,6 +658,12 @@ function monsterFaerbolRender(){
                                    pluginspage="http://www.macromedia.com/go/getflashplayer">
                                    </object>`;
         document.getElementById('globalPlayWindow').appendChild(audioGetDamage);
+        document.getElementById('ggId').style.filter = 'hue-rotate(290deg)';
+        if (Math.round(hpGg) != 0){
+        setTimeout(function () {
+            document.getElementById('ggId').style.filter = 'hue-rotate(360deg)';
+        }, 1000);
+    }
             $(this).dequeue();
             });
     $(faerbol).queue(function () {
@@ -645,59 +672,8 @@ function monsterFaerbolRender(){
     });
 }
 
-function enterName() {
-    if(!enteredNameYet){
-    score = 0;
-    windowName = document.createElement('div');
-    windowName.style.zIndex = '1';
-    windowName.style.bottom = '0';
-    windowName.style.right = '0';
-    windowName.style.left = '0';
-    windowName.style.top = '0';
-    windowName.style.position = 'absolute';
-    windowName.style.height = '400px';
-    windowName.style.width = '512px';
-    windowName.style.margin = 'auto';
-    windowName.style.backgroundColor = 'black';
-    windowName.style.opacity = '.5';
-    windowName.style.color = 'white';
-    windowName.style.textAlign = 'center';
-    windowName.style.display = 'block';
-    let enterH2 = document.createElement('h2');
-    enterH2.style.fontSize = '3em';
-    enterH2.style.fontFamily = 'sans-serif';
-    enterH2.innerText = "Enter your name: ";
-    nameArea = document.createElement('textarea');
-    nameArea.style.display = 'inline-block';
-    let enterButton = document.createElement('button');
-    enterButton.innerText = "Enter";
-    enterButton.style.fontSize = '1.5em';
-    enterButton.style.display  = 'inline-block';
-    enterButton.style.margin   = '10px';
-    windowName.appendChild(enterH2);
-    windowName.appendChild(nameArea);
-    windowName.appendChild(enterButton);
-    document.body.appendChild(windowName);
-    enterButton.addEventListener('click',function(){
-        if(!nameArea.value.match(/\w/)){
-        alert("Please enter you nickname to continue!")
-        }
-        else{
-        enteredNameYet = true;
-        playerName[users] = nameArea.value;
-        tableScore[users] = score; 
-        users += 1; 
-        windowName.style.display = 'none';        
-        toRun();
-        }
-    })
-}
-else{
-    toRun();
-}
-}
 function endWindow(){
-    score = Math.floor((201 - hpMonster)/2);
+    score = Math.round(100 - hpMonster * 7.9598);
     let windowEnd = document.createElement('div');
     windowEnd.style.zIndex = '1';
     windowEnd.style.bottom = '0';
@@ -705,8 +681,8 @@ function endWindow(){
     windowEnd.style.left = '0';
     windowEnd.style.top = '0';
     windowEnd.style.position = 'absolute';
-    windowEnd.style.height = '200px';
-    windowEnd.style.width = '512px';
+    windowEnd.style.height = '12.500em';
+    windowEnd.style.width = '32.000em';
     windowEnd.style.margin = 'auto';
     windowEnd.style.backgroundColor = 'black';
     windowEnd.style.opacity = '.5';
@@ -716,7 +692,7 @@ function endWindow(){
     let enterH2 = document.createElement('h2');
     enterH2.style.fontSize = '3em';
     enterH2.style.fontFamily = 'sans-serif';
-    if(hpMonster === 0){
+    if (Math.round(hpMonster) === 0){
     if(capacity<3){
         capacity+=1;
         }
@@ -740,7 +716,7 @@ function endWindow(){
         tableScore[users - 1] += score;
         score = 0;
         windowEnd.remove();
-        hpGg = 201;
+        hpGg = 12.563;
         hpMonster = hpGg;
         document.getElementById('globalPlayWindow').remove();
         isMainaudio = false;
@@ -761,7 +737,8 @@ function endWindow(){
                                 </object>`;
     enterH2.innerText = "GAME OVER!";
     let ScorePlace = document.createElement('h3');
-    ScorePlace.innerText = "Score: " + tableScore[users - 1];
+    let totalScore = tableScore[users - 1] + score;
+    ScorePlace.innerText = "Score: " + totalScore;
     ScorePlace.style.fontFamily = 'sans-serif';   
     let playAgainButton = document.createElement('button');
     playAgainButton.innerText = "PLAY AGAIN";
@@ -772,7 +749,7 @@ function endWindow(){
     playAgainButton.addEventListener('click',function(){
         windowEnd.remove();
         score = 0;
-        hpGg = 201;
+        hpGg = 12.563;
         hpMonster = hpGg;
         tableScore[users]-=score;
         document.getElementById('globalPlayWindow').remove();
@@ -789,14 +766,14 @@ function endWindow(){
     beginGame = false;
     mainMenuButton.addEventListener('click',function(){
         getDamageYet = false;
-        if(hpGg === 0){
+        if(Math.round(hpGg) === 0){
         let cnf = confirm("If you exit the menu, the game will start again. Continue?");
         if(cnf){
         tableScore[users - 1] += score;
         score = 0;
         enteredNameYet = false;
         capacity = 1;
-        hpGg = 201;
+        hpGg = 12.563;
         hpMonster = hpGg;
         windowEnd.remove();
         document.getElementById('globalPlayWindow').remove();
@@ -805,8 +782,8 @@ function endWindow(){
         document.body.appendChild(information);
         }
     }
-    else if (hpMonster === 0){
-        hpGg = 201;
+    else if (Math.round(hpMonster) === 0){
+        hpGg = 12.563;
         hpMonster = hpGg;
         tableScore[users - 1] += score;
         score = 0;

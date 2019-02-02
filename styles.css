@@ -12,21 +12,21 @@ html, body {
 textarea{
     background-color: burlywood;
     border-radius: 20%;
-    font-size: 30px;
+    font-size: 1.875em;
 }
 
 table{
     margin: auto;
-    width: 400px;
-    border: 5px solid green;
+    width: 25.000em;
+    border: 0.313em solid green;
     color: #fff;
 }
 
 td{
     text-align: center;
-    border: 4px solid green;
-    height: 50px;
-    font-size: 30px;
+    border: 0.250em solid green;
+    height: 3.125em;
+    font-size: 1.875em;
 }
 
 h1{
@@ -38,7 +38,7 @@ button{
     border-radius: 10%;
     transition: 1s;
     background-color: yellow;
-    font-size: 15px;
+    font-size: 0.938em;
 }
 
 button:hover{
@@ -80,19 +80,30 @@ button:hover{
         color: white;
 }
 
+#leftArm{
+    transition: all 0.5s linear;
+}
 
+#leftArm.transform {
+  transform: rotate(-20deg);
+}
 
+#weapon{
+    transition: all 0.5s linear;
+}
+
+#weapon.transform {
+  transform: rotate(-20deg);
+}
 
 
 #game-over, #game-over-overlay {
 
     margin: auto;
 
-    width: 512px;
+    width: 32.000em;
 
-    height: 480px;
-
-    position: absolute;
+    height: 30.000em;
 
     top: 0;
 
@@ -122,7 +133,7 @@ button:hover{
 
 #game-over {
 
-    height: 200px;
+    height: 12.500em;
 
     text-align: center;
 
@@ -157,25 +168,26 @@ button:hover{
     background: #9A12B3;
     z-index: 30;}
      
-    .contpre small{font-size:25px;}
+    .contpre small{font-size:1.563em;}
      
     .contpre{
-    width: 250px;
-    height: 100px;
+    width: 15.625em;
+    height: 6.250em;
     position: absolute;
     left: 50%;top: 48%;
-    margin-left:-125px;
-    margin-top:-75px;
+    margin-left:-7.813em;
+    margin-top:-4.688em;
     color:#fff;
-    font-size:40px;
-    letter-spacing:-2px;
+    font-size:2.500em;
+    letter-spacing:-0.125em;
     text-align:center;
-    line-height:35px;}
+    line-height:2.188em;
+}
      
     #p_prldr .svg_anm {
     position: absolute;
-    width: 41px;
-    height: 41px;
+    width: 2.563em;
+    height: 2.563em;
     background: url(img/oval.png) center center no-repeat;
-    background-size:41px;    
-    margin: -16px 0 0 -16px;}
+    background-size:2.563em;    
+    margin: -1.000em 0 0 -1.000em;}
